@@ -332,5 +332,9 @@ ASALocalRun/
 # ignore all dumps files
 dumps/*
 
+DiagnosticsShowcase/uploads/*
+
 # don't ignore keep files
 !.keep
+
+
