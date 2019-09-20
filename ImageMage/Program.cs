@@ -47,7 +47,33 @@ namespace ImageMage
 
         private static void ConvertToGreyscale(FileInfo imageFileInfo)
         {
-            throw new NotImplementedException();
+            if (File.Exists("out.ppm"))
+                File.Delete("out.ppm");
+            
+            using (Image<Rgba32> image = Image.Load<Rgba32>(imageFileInfo.FullName))
+            using (var outFile = File.OpenWrite("out.ppm"))
+            using (var writer = new BinaryWriter(outFile))
+            {
+                image.Mutate(x => x.Resize(250, 250));
+                var sb = new StringBuilder();
+                sb.Append($"P3\n{image.Width} {image.Height}\n255\n");
+                for (int y = 0; y < image.Height; y++)
+                {
+                    for (int x = 0; x < image.Width; x++)
+                    {
+                        // this line will cause the new value to be larger than a byte and throw a
+                        // System.OverflowException at runtime! The fix is changing `1.11` to `0.11`.
+                        byte newPixelValue = checked((byte)(0.3 * image[x,y].R + 0.59 * image[x,y].G + 1.11 * image[x,y].B));
+                        // byte newPixelValue = checked((byte)(0.3 * image[x,y].R + 0.59 * image[x,y].G + 0.11 * image[x,y].B));
+
+                        sb.Append($"{newPixelValue} {newPixelValue} {newPixelValue} ");
+                    }
+                    sb.Append('\n');
+                }
+
+                var bytes = Encoding.UTF8.GetBytes(sb.ToString());
+                writer.Write(bytes);
+            }
         }
 
         private static void ConvertToPPM(FileInfo imageFileInfo)
