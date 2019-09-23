@@ -14,42 +14,58 @@ namespace ImageMage
         static string[] Transforms = new string[] { "ppm", "ppm-slow", "greyscale" };
         static void Main(string[] args)
         {
-            if (args.Length < 2) throw new ArgumentException("Usage: ImageMage <imagefile> <transform>");
+            if (args.Length < 1) throw new ArgumentException("Usage: ImageMage <imagefile>");
 
             var imageFileInfo = new FileInfo(args[0]);
             if (!imageFileInfo.Exists)
                 throw new ArgumentException($"Image file '{args[0]}' does not exist");
 
-            var transform = args[1];
-            if (!Transforms.Contains(transform))
-                throw new ArgumentException($"Invalid transform '{transform}'");
+            Console.WriteLine("Valid transforms: 'ppm', 'ppm-slow', 'greyscale'");
+            Console.WriteLine("Type 'quit' to quit.");
 
-            var sw = new Stopwatch();
-            sw.Start();
-            switch (transform)
+            while (true)
             {
-                case "ppm":
-                    ConvertToPPM(imageFileInfo);
-                    break;
-                case "ppm-slow":
-                    ConvertToPPMSlow(imageFileInfo);
-                    break;
-                case "greyscale":
-                    ConvertToGreyscale(imageFileInfo);
-                    break;
-                default:
-                    break;
-            }
-            sw.Stop();
+                Console.Write("Type a transform: ");
+                var transform = Console.ReadLine();
 
-            Console.WriteLine($"Time elapsed: {sw.Elapsed.ToString(@"hh\:mm\:ss\.ffff")}");
+                if (transform == "quit")
+                    break;
+
+                if (!Transforms.Contains(transform))
+                {
+                    Console.WriteLine($"Unknown transform!!");
+                    continue;
+                }
+
+                var sw = new Stopwatch();
+                sw.Start();
+                switch (transform)
+                {
+                    case "ppm":
+                        ConvertToPPM(imageFileInfo);
+                        break;
+                    case "ppm-slow":
+                        ConvertToPPMSlow(imageFileInfo);
+                        break;
+                    case "greyscale":
+                        ConvertToGreyscale(imageFileInfo);
+                        break;
+                    default:
+                        break;
+                }
+                sw.Stop();
+
+                Console.WriteLine($"Time elapsed: {sw.Elapsed.ToString(@"hh\:mm\:ss\.ffff")}");
+            }
+
+            Console.WriteLine("Goodbye!");
         }
 
         private static void ConvertToGreyscale(FileInfo imageFileInfo)
         {
             if (File.Exists("out.ppm"))
                 File.Delete("out.ppm");
-            
+
             using (Image<Rgba32> image = Image.Load<Rgba32>(imageFileInfo.FullName))
             using (var outFile = File.OpenWrite("out.ppm"))
             using (var writer = new BinaryWriter(outFile))
@@ -63,7 +79,7 @@ namespace ImageMage
                     {
                         // this line will cause the new value to be larger than a byte and throw a
                         // System.OverflowException at runtime! The fix is changing `1.11` to `0.11`.
-                        byte newPixelValue = checked((byte)(0.3 * image[x,y].R + 0.59 * image[x,y].G + 1.11 * image[x,y].B));
+                        byte newPixelValue = checked((byte)(0.3 * image[x, y].R + 0.59 * image[x, y].G + 1.11 * image[x, y].B));
                         // byte newPixelValue = checked((byte)(0.3 * image[x,y].R + 0.59 * image[x,y].G + 0.11 * image[x,y].B));
 
                         sb.Append($"{newPixelValue} {newPixelValue} {newPixelValue} ");
@@ -94,7 +110,7 @@ namespace ImageMage
                 {
                     for (int x = 0; x < image.Width; x++)
                     {
-                        sb.Append($"{image[x,y].R} {image[x,y].G} {image[x,y].B} ");
+                        sb.Append($"{image[x, y].R} {image[x, y].G} {image[x, y].B} ");
                     }
                     sb.Append("\n");
                 }
@@ -127,7 +143,7 @@ namespace ImageMage
                 {
                     for (int x = 0; x < image.Width; x++)
                     {
-                        outString += $"{image[x,y].R} {image[x,y].G} {image[x,y].B} ";
+                        outString += $"{image[x, y].R} {image[x, y].G} {image[x, y].B} ";
                     }
                     outString += "\n";
                 }
