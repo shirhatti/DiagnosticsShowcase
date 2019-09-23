@@ -11,7 +11,7 @@ namespace ImageMage
 {
     class Program
     {
-        static string[] Transforms = new string[] { "ppm", "ppm-slow", "greyscale", "quit" };
+        static string[] Transforms = new string[] { "ppm", "ppm-slow", "greyscale" };
         static void Main(string[] args)
         {
             if (args.Length < 1) throw new ArgumentException("Usage: ImageMage <imagefile>");
@@ -27,11 +27,15 @@ namespace ImageMage
             {
                 Console.Write("Type a transform: ");
                 var transform = Console.ReadLine();
-                if (!Transforms.Contains(transform))
-                    throw new ArgumentException($"Invalid transform '{transform}'");
-                
+
                 if (transform == "quit")
                     break;
+
+                if (!Transforms.Contains(transform))
+                {
+                    Console.WriteLine($"Unknown transform!!");
+                    continue;
+                }
 
                 var sw = new Stopwatch();
                 sw.Start();
