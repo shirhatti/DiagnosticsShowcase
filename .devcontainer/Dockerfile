@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM mcr.microsoft.com/dotnet/core-nightly/sdk:3.0
+FROM mcr.microsoft.com/dotnet/core-nightly/sdk:3.1
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -39,9 +39,10 @@ RUN apt-get update \
 
 ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE="1"
 
-RUN dotnet tool install --global dotnet-dump --version 3.0.0-preview8.19412.1
-RUN dotnet tool install --global dotnet-trace --version 3.0.0-preview8.19412.1
-RUN dotnet tool install --global dotnet-counters --version 3.0.0-preview8.19412.1
+RUN dotnet tool install --global dotnet-dump
+RUN dotnet tool install --global dotnet-trace
+RUN dotnet tool install --global dotnet-gcdump
+RUN dotnet tool install --global dotnet-counters
 
 ENV PATH="$PATH:/root/.dotnet/tools"
 ENV COMPlus_DbgEnableMiniDump="1"
