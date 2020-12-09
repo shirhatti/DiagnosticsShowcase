@@ -45,8 +45,9 @@ RUN dotnet tool install --global dotnet-gcdump
 RUN dotnet tool install --global dotnet-counters
 
 ENV PATH="$PATH:/root/.dotnet/tools"
-ENV COMPlus_DbgEnableMiniDump="1"
+# ENV COMPlus_DbgEnableMiniDump=1
 ENV COMPlus_DbgMiniDumpName="/workspaces/DiagnosticsShowcase/dumps/coredump_%d"
+ENV COMPlus_DbgMiniDumpType="4"
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
